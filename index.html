@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sudoku Helper</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>Sudoku Helper</h1>
+          <p>
+            Blank board with pencil marks. Choose a number status on the left,
+            then click a pencil mark to apply it. Placing a digit clears that
+            mark from the same box, row, and column. When a digit has only one
+            remaining pencil mark in a box, row, or column — or only one mark left
+            in a cell — it is auto-placed as a user entry (black).
+          </p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn" id="undo-btn" title="Undo (Ctrl/Cmd+Z)" disabled>
+            Undo
+          </button>
+          <button type="button" class="btn" id="redo-btn" title="Redo (Ctrl/Cmd+Y)" disabled>
+            Redo
+          </button>
+          <button type="button" class="btn" id="new-game-btn" title="Start a New Game">
+            New Game
+          </button>
+        </div>
+      </header>
+
+      <div class="main">
+        <aside class="side-panel mode-panel" aria-label="Number status">
+          <h2 class="side-title">Number status</h2>
+          <p class="side-hint">Select a mode (or press <u>H</u> / <u>U</u> / <u>G</u>), then click a pencil mark.</p>
+          <div
+            id="mode-select"
+            class="mode-list"
+            role="radiogroup"
+            aria-label="Number status modes"
+          >
+            <button
+              type="button"
+              class="mode-btn active"
+              role="radio"
+              aria-checked="true"
+              data-mode="HIDE"
+              id="mode-hide"
+              title="Hotkey: H"
+            >
+              <span class="mode-name"><u class="hotkey-letter">H</u>ide mark</span>
+              <span class="mode-desc">Remove that pencil mark only</span>
+            </button>
+            <button
+              type="button"
+              class="mode-btn mode-user"
+              role="radio"
+              aria-checked="false"
+              data-mode="USER"
+              id="mode-user"
+              title="Hotkey: U"
+            >
+              <span class="mode-name">Place <u class="hotkey-letter">u</u>ser</span>
+              <span class="mode-desc">Fill cell (black)</span>
+            </button>
+            <button
+              type="button"
+              class="mode-btn mode-given"
+              role="radio"
+              aria-checked="false"
+              data-mode="GIVEN"
+              id="mode-given"
+              title="Hotkey: G"
+            >
+              <span class="mode-name">Place <u class="hotkey-letter">g</u>iven</span>
+              <span class="mode-desc">Fill cell (blue)</span>
+            </button>
+          </div>
+        </aside>
+
+        <div id="board" class="grid" aria-label="Sudoku board"></div>
+
+        <aside class="side-panel stats-panel" aria-label="Digit frequency">
+          <h2 class="side-title">Digit stats</h2>
+          <p class="side-hint">Placed / remaining (of 9). Completes when all nine are filled.</p>
+          <div id="digit-stats" class="stats-list"></div>
+        </aside>
+      </div>
+
+      <div class="help">
+        <ul>
+          <li><strong>Number status</strong> (left) — choose Hide mark, Place user, or Place given (<strong>H</strong> / <strong>U</strong> / <strong>G</strong>)</li>
+          <li><strong>Click</strong> a pencil mark — apply the selected status</li>
+          <li><strong>Auto-place</strong> — sole remaining mark of a digit in a box, row, or column, or a cell with only one mark left, becomes a user entry</li>
+          <li><strong>Conflicts</strong> — duplicate filled digits in a box, row, or column highlight in red</li>
+          <li><strong>Hover</strong> a digit (board or stats panel) — highlight matching marks and values board-wide</li>
+          <li><strong>Undo / Redo</strong> — reverse or re-apply changes (Ctrl/Cmd+Z / Y)</li>
+          <li><strong>New Game</strong> — reset to all pencil marks</li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="board.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
