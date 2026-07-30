@@ -26,7 +26,8 @@ Or open `index.html` directly in your browser (plain `<script>` tags; works with
 | **Mode select** | Choose **Hide mark**, **Place user** (black), or **Place given** (blue), then click a pencil mark |
 | **Hotkeys** | `H` / `U` / `G` switch modes; underlined letters on the mode buttons |
 | **Peer clear** | Placing a digit removes that candidate from the same box, row, and column |
-| **Auto-place** | Sole remaining mark in a **cell** (naked single), or sole remaining instance of a digit in a **box / row / column**, is filled as a user entry and cascades |
+| **Auto-place / techniques** | Naked & hidden **singles**, **naked pairs/triples**, and **pointing (box-line)** — each toggleable; cascade after every change |
+| **Advanced hints** | **X-Wing** and **simple coloring** highlight patterns only (never auto-apply) |
 | **Conflicts** | Duplicate filled digits in a box, row, or column highlight in red |
 | **Digit stats** | Side panel shows placed / remaining (of 9); green “Complete” when all nine are filled |
 | **Hover highlight** | Hover a digit on the board or stats panel to highlight all matching marks and values |
@@ -37,9 +38,10 @@ Or open `index.html` directly in your browser (plain `<script>` tags; works with
 
 1. Select a **number status** on the left (or press `H`, `U`, or `G`).
 2. Click pencil marks on the board to hide candidates or place values.
-3. Watch **auto-place** fill forced singles and **conflicts** light up in red if the same digit is placed twice in a unit.
-4. Use **digit stats** on the right to track how many of each digit you’ve placed.
-5. **Undo** anytime; **New Game** starts over.
+3. Watch **auto techniques** (singles, pairs, triples, pointing) when toggled on; use **Hint: X-Wing / Coloring** for optional advanced patterns.
+4. **Conflicts** light up in red if the same digit is placed twice in a unit.
+5. Use **digit stats** on the right to track how many of each digit you’ve placed.
+6. **Undo** anytime; **New Game** starts over.
 
 > This is a *helper*, not a puzzle generator or full solver. You enter the clues (givens) and work candidates yourself—the app automates the bookkeeping.
 
@@ -57,8 +59,8 @@ sudoku-helper/
 
 | Module | Responsibility |
 |--------|----------------|
-| `board.js` | Grid model, hide/place, peer clear, history, auto-promote, conflicts, digit frequency |
-| `app.js` | DOM render, mode hotkeys, hover, undo/redo wiring |
+| `board.js` | Grid model, hide/place, peer clear, history, techniques, conflicts, digit frequency |
+| `app.js` | DOM render, modes, technique toggles/hints, hover, undo/redo |
 | `styles.css` | Visual design (GIVEN blue, USER black, HINT gray, conflict red) |
 
 ## Tests
@@ -72,6 +74,7 @@ node test/mode-select.test.js
 node test/auto-promote.test.js
 node test/naked-single.test.js
 node test/conflict-hotkey.test.js
+node test/advanced-techniques.test.js
 ```
 
 Or run them all:

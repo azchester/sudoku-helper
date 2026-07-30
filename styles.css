@@ -178,6 +178,67 @@ header p {
   font-weight: 700;
 }
 
+.technique-heading {
+  margin-top: 1.1rem;
+}
+
+.technique-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.technique-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.technique-toggle input {
+  margin: 0;
+}
+
+.technique-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.btn.secondary {
+  background: #f7f7f9;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.65rem;
+}
+
+.hint-message {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #444;
+  min-height: 1.2em;
+}
+
+.hint-message.has-hint {
+  color: #1a4a7a;
+  font-weight: 550;
+}
+
+.hint.technique-hint,
+.cell-value.technique-hint {
+  outline: 2px solid #7b1fa2;
+  outline-offset: 0;
+  background: #f3e5f5 !important;
+}
+
+.hint.technique-elim {
+  outline: 2px dashed #c62828;
+  background: #ffebee !important;
+}
+
 /* 3×3 of 3×3 boxes */
 .grid {
   display: grid;

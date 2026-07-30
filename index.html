@@ -16,7 +16,8 @@
             then click a pencil mark to apply it. Placing a digit clears that
             mark from the same box, row, and column. When a digit has only one
             remaining pencil mark in a box, row, or column — or only one mark left
-            in a cell — it is auto-placed as a user entry (black).
+            in a cell — it is auto-placed as a user entry (black). Toggle pairs,
+            triples, and pointing on the left; use X-Wing / coloring as hints only.
           </p>
         </div>
         <div class="header-actions">
@@ -79,6 +80,43 @@
               <span class="mode-desc">Fill cell (blue)</span>
             </button>
           </div>
+
+          <h2 class="side-title technique-heading">Auto techniques</h2>
+          <p class="side-hint">Applied after each change when enabled. Hints never auto-change the board.</p>
+          <div id="technique-toggles" class="technique-list" aria-label="Technique toggles">
+            <label class="technique-toggle">
+              <input type="checkbox" id="tech-naked-singles" data-tech="nakedSingles" checked />
+              <span>Naked singles</span>
+            </label>
+            <label class="technique-toggle">
+              <input type="checkbox" id="tech-hidden-singles" data-tech="hiddenSingles" checked />
+              <span>Hidden singles</span>
+            </label>
+            <label class="technique-toggle">
+              <input type="checkbox" id="tech-naked-pairs" data-tech="nakedPairs" checked />
+              <span>Naked pairs</span>
+            </label>
+            <label class="technique-toggle">
+              <input type="checkbox" id="tech-naked-triples" data-tech="nakedTriples" checked />
+              <span>Naked triples</span>
+            </label>
+            <label class="technique-toggle">
+              <input type="checkbox" id="tech-pointing" data-tech="pointing" checked />
+              <span>Pointing / box-line</span>
+            </label>
+          </div>
+          <div class="technique-actions">
+            <button type="button" class="btn secondary" id="hint-xwing-btn" title="Show X-Wing pattern (no auto-change)">
+              Hint: X-Wing
+            </button>
+            <button type="button" class="btn secondary" id="hint-coloring-btn" title="Show simple coloring (no auto-change)">
+              Hint: Coloring
+            </button>
+            <button type="button" class="btn secondary" id="hint-clear-btn" title="Clear hint highlights">
+              Clear hint
+            </button>
+          </div>
+          <p id="hint-message" class="hint-message" aria-live="polite"></p>
         </aside>
 
         <div id="board" class="grid" aria-label="Sudoku board"></div>
@@ -94,7 +132,8 @@
         <ul>
           <li><strong>Number status</strong> (left) — choose Hide mark, Place user, or Place given (<strong>H</strong> / <strong>U</strong> / <strong>G</strong>)</li>
           <li><strong>Click</strong> a pencil mark — apply the selected status</li>
-          <li><strong>Auto-place</strong> — sole remaining mark of a digit in a box, row, or column, or a cell with only one mark left, becomes a user entry</li>
+          <li><strong>Auto-place / techniques</strong> — singles, naked pairs/triples, and pointing eliminate when toggled on</li>
+          <li><strong>Hints</strong> — X-Wing and simple coloring show patterns only (never auto-apply)</li>
           <li><strong>Conflicts</strong> — duplicate filled digits in a box, row, or column highlight in red</li>
           <li><strong>Hover</strong> a digit (board or stats panel) — highlight matching marks and values board-wide</li>
           <li><strong>Undo / Redo</strong> — reverse or re-apply changes (Ctrl/Cmd+Z / Y)</li>

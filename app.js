@@ -20,8 +20,11 @@
   var modeSelectEl = null;
   var undoBtn = null;
   var redoBtn = null;
+  var hintMessageEl = null;
   /** Tracks hover source so board-digit leave does not clear stats hover. */
   var highlightSource = null; // 'board' | 'stats' | null
+  /** Active advanced hint (X-Wing / coloring) for DOM highlight; null when none. */
+  var activeHint = null;
 
   function applyHighlights() {
     if (!boardEl) return;
@@ -37,6 +40,99 @@
         el.classList.toggle("highlight-filled", isMatch);
       }
     }
+    applyTechniqueHintHighlights();
+  }
+
+  function hintKey(s, c, d) {
+    return s + "," + c + "," + d;
+  }
+
+  function applyTechniqueHintHighlights() {
+    if (!boardEl) return;
+    var all = boardEl.querySelectorAll(
+      ".hint.technique-hint, .hint.technique-elim, .cell-value.technique-hint"
+    );
+    var ai;
+    for (ai = 0; ai < all.length; ai++) {
+      all[ai].classList.remove("technique-hint", "technique-elim");
+    }
+    if (!activeHint) return;
+
+    var elimSet = Object.create(null);
+    var hlSet = Object.create(null);
+    var e;
+    if (activeHint.eliminate) {
+      for (e = 0; e < activeHint.eliminate.length; e++) {
+        var el0 = activeHint.eliminate[e];
+        elimSet[hintKey(el0.superCell, el0.cell, el0.digit)] = true;
+      }
+    }
+    if (activeHint.highlight) {
+      for (e = 0; e < activeHint.highlight.length; e++) {
+        var hl0 = activeHint.highlight[e];
+        hlSet[hintKey(hl0.superCell, hl0.cell, hl0.digit)] = true;
+      }
+    }
+
+    var nodes = boardEl.querySelectorAll(".hint.visible, .cell-value");
+    for (e = 0; e < nodes.length; e++) {
+      var node = nodes[e];
+      var sc = node.getAttribute("data-super-cell");
+      var cellAttr = node.getAttribute("data-cell");
+      var dig = node.getAttribute("data-value");
+      if (sc == null || dig == null) {
+        // cell-value may only have data-value; parent cell has coords
+        var parent = node.parentElement;
+        if (parent) {
+          sc = parent.getAttribute("data-super-cell");
+          cellAttr = parent.getAttribute("data-cell");
+        }
+      }
+      if (sc == null || cellAttr == null || dig == null) continue;
+      var k = hintKey(sc, cellAttr, dig);
+      if (elimSet[k]) {
+        node.classList.add("technique-elim");
+      } else if (hlSet[k]) {
+        node.classList.add("technique-hint");
+      }
+    }
+  }
+
+  function setActiveHint(hint) {
+    activeHint = hint;
+    if (hintMessageEl) {
+      if (hint && hint.message) {
+        hintMessageEl.textContent = hint.message;
+        hintMessageEl.classList.add("has-hint");
+      } else {
+        hintMessageEl.textContent = hint === null ? "" : "No pattern found.";
+        hintMessageEl.classList.toggle("has-hint", false);
+      }
+    }
+    applyTechniqueHintHighlights();
+  }
+
+  function syncTechniqueTogglesFromBoard() {
+    var opts = Board.getTechniqueOptions();
+    var root = document.getElementById("technique-toggles");
+    if (!root) return;
+    var inputs = root.querySelectorAll("input[data-tech]");
+    for (var i = 0; i < inputs.length; i++) {
+      var key = inputs[i].getAttribute("data-tech");
+      if (opts[key] !== undefined) {
+        inputs[i].checked = !!opts[key];
+      }
+    }
+  }
+
+  function onTechniqueToggleChange(e) {
+    var input = e.target;
+    if (!input || !input.getAttribute) return;
+    var key = input.getAttribute("data-tech");
+    if (!key) return;
+    var partial = {};
+    partial[key] = !!input.checked;
+    Board.setTechniqueOptions(partial);
   }
 
   function updateHistoryButtons() {
@@ -236,6 +332,7 @@
     renderStats();
     updateHistoryButtons();
     updateModeButtons();
+    applyTechniqueHintHighlights();
   }
 
   /**
@@ -414,6 +511,7 @@
     modeSelectEl = document.getElementById("mode-select");
     undoBtn = document.getElementById("undo-btn");
     redoBtn = document.getElementById("redo-btn");
+    hintMessageEl = document.getElementById("hint-message");
 
     if (!boardEl) {
       console.error("#board mount point missing");
@@ -431,6 +529,42 @@
     if (statsEl) {
       statsEl.addEventListener("mouseover", onStatsEnter);
       statsEl.addEventListener("mouseout", onStatsLeave);
+    }
+
+    var techRoot = document.getElementById("technique-toggles");
+    if (techRoot) {
+      techRoot.addEventListener("change", onTechniqueToggleChange);
+      syncTechniqueTogglesFromBoard();
+    }
+
+    var xwingBtn = document.getElementById("hint-xwing-btn");
+    if (xwingBtn) {
+      xwingBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var hint = Board.findXWingHint(state);
+        setActiveHint(hint);
+        if (!hint && hintMessageEl) {
+          hintMessageEl.textContent = "No X-Wing pattern found.";
+        }
+      });
+    }
+    var colorBtn = document.getElementById("hint-coloring-btn");
+    if (colorBtn) {
+      colorBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        var hint = Board.findSimpleColoringHint(state);
+        setActiveHint(hint);
+        if (!hint && hintMessageEl) {
+          hintMessageEl.textContent = "No simple coloring chain found.";
+        }
+      });
+    }
+    var clearHintBtn = document.getElementById("hint-clear-btn");
+    if (clearHintBtn) {
+      clearHintBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        setActiveHint(null);
+      });
     }
 
     var newBtn = document.getElementById("new-game-btn");
@@ -469,6 +603,30 @@
       setHighlightFrom: setHighlightFrom,
       getConflicts: function () {
         return Board.detectConflicts(state);
+      },
+      getTechniqueOptions: function () {
+        return Board.getTechniqueOptions();
+      },
+      setTechniqueOptions: function (partial) {
+        var o = Board.setTechniqueOptions(partial);
+        syncTechniqueTogglesFromBoard();
+        return o;
+      },
+      showXWingHint: function () {
+        var h = Board.findXWingHint(state);
+        setActiveHint(h);
+        return h;
+      },
+      showColoringHint: function () {
+        var h = Board.findSimpleColoringHint(state);
+        setActiveHint(h);
+        return h;
+      },
+      clearHint: function () {
+        setActiveHint(null);
+      },
+      getActiveHint: function () {
+        return activeHint;
       },
       render: render,
       newGame: newGame,
