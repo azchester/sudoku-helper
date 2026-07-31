@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Sudoku Helper">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eef0f5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded app tile -->
+  <rect x="1" y="1" width="30" height="30" rx="6.5" fill="url(#bg)"/>
+  <rect x="1.5" y="1.5" width="29" height="29" rx="6" fill="none" stroke="#d0d2da" stroke-width="0.75"/>
+
+  <!-- Board -->
+  <g transform="translate(4.5 4.5)">
+    <rect x="0" y="0" width="23" height="23" rx="1.4" fill="#ffffff"/>
+
+    <!-- Thin cell lines -->
+    <g stroke="#a8a8b0" stroke-width="0.5" stroke-linecap="square">
+      <path d="M7.67 0.5 V22.5"/>
+      <path d="M15.33 0.5 V22.5"/>
+      <path d="M0.5 7.67 H22.5"/>
+      <path d="M0.5 15.33 H22.5"/>
+    </g>
+
+    <!-- Thick outer frame (classic sudoku box) -->
+    <rect x="0.4" y="0.4" width="22.2" height="22.2" rx="1.1" fill="none" stroke="#1a1a1a" stroke-width="1.4"/>
+
+    <!-- Hint highlight on center cell (app yellow) -->
+    <rect x="7.95" y="7.95" width="7.1" height="7.1" rx="0.55" fill="#ffe566"/>
+
+    <!-- Digits: given = app blue, user = black -->
+    <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+       font-weight="700"
+       font-size="6.4"
+       text-anchor="middle"
+       dominant-baseline="central">
+      <text x="3.83" y="4.0" fill="#0000ee">5</text>
+      <text x="11.5" y="4.0" fill="#111111">9</text>
+      <text x="19.17" y="4.0" fill="#0000ee">3</text>
+
+      <text x="3.83" y="11.5" fill="#111111">8</text>
+      <text x="11.5" y="11.5" fill="#0000ee">7</text>
+      <text x="19.17" y="11.5" fill="#111111">2</text>
+
+      <text x="3.83" y="19.0" fill="#0000ee">1</text>
+      <text x="11.5" y="19.0" fill="#111111">6</text>
+      <text x="19.17" y="19.0" fill="#0000ee">4</text>
+    </g>
+  </g>
+</svg>

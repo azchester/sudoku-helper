@@ -4,7 +4,29 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sudoku Helper</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      /* Apply theme before paint to avoid a light/dark flash. */
+      (function () {
+        try {
+          var KEY = "sudoku-theme";
+          var pref = localStorage.getItem(KEY) || "system";
+          if (pref !== "light" && pref !== "dark" && pref !== "system") pref = "system";
+          var resolved =
+            pref === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : pref;
+          document.documentElement.setAttribute("data-theme", resolved);
+          document.documentElement.setAttribute("data-theme-pref", pref);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+          document.documentElement.setAttribute("data-theme-pref", "system");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div class="wrap">
@@ -21,6 +43,25 @@
           </p>
         </div>
         <div class="header-actions">
+          <button
+            type="button"
+            class="btn theme-toggle"
+            id="theme-toggle"
+            aria-label="Theme: System"
+            title="Theme: System (follows OS). Click to cycle System → Light → Dark."
+          >
+            <svg class="theme-icon icon-system" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="12" rx="2"/>
+              <path d="M8 20h8M12 16v4"/>
+            </svg>
+            <svg class="theme-icon icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+            <svg class="theme-icon icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/>
+            </svg>
+          </button>
           <button type="button" class="btn" id="undo-btn" title="Undo (Ctrl/Cmd+Z)" disabled>
             Undo
           </button>
@@ -138,6 +179,7 @@
           <li><strong>Hover</strong> a digit (board or stats panel) — highlight matching marks and values board-wide</li>
           <li><strong>Undo / Redo</strong> — reverse or re-apply changes (Ctrl/Cmd+Z / Y)</li>
           <li><strong>New Game</strong> — reset to all pencil marks</li>
+          <li><strong>Theme</strong> — cycles System (OS default) → Light → Dark; preference is saved</li>
         </ul>
       </div>
     </div>

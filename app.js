@@ -505,6 +505,111 @@
     }
   }
 
+  /* —— Theme (system / light / dark) —— */
+  var THEME_KEY = "sudoku-theme";
+  var THEME_ORDER = ["system", "light", "dark"];
+  var themeMedia = null;
+
+  function normalizeThemePref(pref) {
+    if (pref === "light" || pref === "dark" || pref === "system") return pref;
+    return "system";
+  }
+
+  function getThemePref() {
+    try {
+      return normalizeThemePref(localStorage.getItem(THEME_KEY) || "system");
+    } catch (e) {
+      return "system";
+    }
+  }
+
+  function setThemePref(pref) {
+    pref = normalizeThemePref(pref);
+    try {
+      if (pref === "system") {
+        localStorage.removeItem(THEME_KEY);
+      } else {
+        localStorage.setItem(THEME_KEY, pref);
+      }
+    } catch (e) {
+      /* private mode / blocked storage */
+    }
+    applyTheme(pref);
+    return pref;
+  }
+
+  function resolveTheme(pref) {
+    pref = normalizeThemePref(pref);
+    if (pref === "light" || pref === "dark") return pref;
+    if (window.matchMedia) {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    }
+    return "light";
+  }
+
+  function themeLabel(pref) {
+    if (pref === "light") return "Light";
+    if (pref === "dark") return "Dark";
+    return "System";
+  }
+
+  function updateThemeToggle(pref, resolved) {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    var label = themeLabel(pref);
+    var resolvedNote =
+      pref === "system" ? " (currently " + resolved + ")" : "";
+    btn.setAttribute("aria-label", "Theme: " + label);
+    btn.title =
+      "Theme: " +
+      label +
+      resolvedNote +
+      ". Click to cycle System → Light → Dark.";
+  }
+
+  function applyTheme(pref) {
+    pref = normalizeThemePref(pref);
+    var resolved = resolveTheme(pref);
+    var root = document.documentElement;
+    root.setAttribute("data-theme", resolved);
+    root.setAttribute("data-theme-pref", pref);
+    updateThemeToggle(pref, resolved);
+  }
+
+  function cycleTheme() {
+    var current = getThemePref();
+    var idx = THEME_ORDER.indexOf(current);
+    if (idx < 0) idx = 0;
+    var next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+    return setThemePref(next);
+  }
+
+  function initTheme() {
+    applyTheme(getThemePref());
+    if (window.matchMedia) {
+      themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+      var onChange = function () {
+        if (getThemePref() === "system") {
+          applyTheme("system");
+        }
+      };
+      if (themeMedia.addEventListener) {
+        themeMedia.addEventListener("change", onChange);
+      } else if (themeMedia.addListener) {
+        themeMedia.addListener(onChange);
+      }
+    }
+    var themeBtn = document.getElementById("theme-toggle");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        cycleTheme();
+      });
+    }
+  }
+
   function init() {
     boardEl = document.getElementById("board");
     statsEl = document.getElementById("digit-stats");
@@ -512,6 +617,8 @@
     undoBtn = document.getElementById("undo-btn");
     redoBtn = document.getElementById("redo-btn");
     hintMessageEl = document.getElementById("hint-message");
+
+    initTheme();
 
     if (!boardEl) {
       console.error("#board mount point missing");
@@ -599,6 +706,10 @@
       getSelectedMode: function () {
         return selectedMode;
       },
+      getThemePref: getThemePref,
+      setThemePref: setThemePref,
+      cycleTheme: cycleTheme,
+      resolveTheme: resolveTheme,
       setSelectedMode: setSelectedMode,
       setHighlightFrom: setHighlightFrom,
       getConflicts: function () {

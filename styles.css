@@ -1,12 +1,16 @@
 /* Sudoku helper — mirrors Java Swing colors: GIVEN blue, USER black, HINT gray;
-   hover: yellow (pencil marks) / orange (filled values). */
+   hover: yellow (pencil marks) / orange (filled values). Light/dark via data-theme. */
 
-:root {
+:root,
+html[data-theme="light"] {
+  color-scheme: light;
   --bg: #f4f4f6;
   --panel: #ffffff;
   --border-box: #1a1a1a;
   --border-cell: #9a9a9a;
   --text: #222;
+  --text-muted: #555;
+  --text-subtle: #666;
   --given: #0000ee;
   --user: #000000;
   --hint: #808080;
@@ -18,8 +22,92 @@
   --conflict: #d32f2f;
   --conflict-bg: #ffebee;
   --conflict-unit: #ffcdd2;
+  --conflict-box-bg: #fff5f5;
+  --btn-bg: #ffffff;
+  --btn-border: #bbb;
+  --btn-hover: #f0f0f0;
+  --btn-active: #e4e4e4;
+  --btn-secondary-bg: #f7f7f9;
+  --mode-bg: #fafafa;
+  --mode-border: #e0e0e0;
+  --mode-hover: #f0f0f0;
+  --mode-active-bg: #ebf4ff;
+  --mode-active-border: #2b6cb0;
+  --mode-user-active-bg: #f3f3f3;
+  --mode-given-active-bg: #eef0ff;
+  --mode-desc-active: #444;
+  --grid-gap-bg: #ccc;
+  --cell-bg: #fafafa;
+  --cell-filled-bg: #ffffff;
+  --hint-hover-outline: #ccc;
+  --hint-hl-text: #333;
+  --side-border: #ddd;
+  --side-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --stat-bg: #fafafa;
+  --stat-border: #e6e6e6;
+  --stat-hover-bg: #f0f4ff;
+  --stat-hover-border: #bbb;
+  --hint-msg: #444;
+  --hint-msg-active: #1a4a7a;
+  --tech-hint-outline: #7b1fa2;
+  --tech-hint-bg: #f3e5f5;
+  --tech-elim-outline: #c62828;
+  --tech-elim-bg: #ffebee;
   --gap-box: 6px;
   --gap-cell: 4px;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12141a;
+  --panel: #1c1e26;
+  --border-box: #e6e6ec;
+  --border-cell: #5a5c68;
+  --text: #e8e8ee;
+  --text-muted: #a0a2b0;
+  --text-subtle: #8b8d9a;
+  --given: #6ea8ff;
+  --user: #f2f2f6;
+  --hint: #9a9ca8;
+  --hl-hint: #d4b400;
+  --hl-filled: #e08900;
+  --complete-bg: #1e3a28;
+  --complete-border: #3dd68c;
+  --complete-text: #a8e6c3;
+  --conflict: #ff6b6b;
+  --conflict-bg: #3a1a1a;
+  --conflict-unit: #4a2222;
+  --conflict-box-bg: #2a1818;
+  --btn-bg: #252730;
+  --btn-border: #4a4c58;
+  --btn-hover: #32343e;
+  --btn-active: #3a3c48;
+  --btn-secondary-bg: #22242c;
+  --mode-bg: #22242c;
+  --mode-border: #3a3c48;
+  --mode-hover: #2c2e38;
+  --mode-active-bg: #1a2a40;
+  --mode-active-border: #5b9cf5;
+  --mode-user-active-bg: #2a2c34;
+  --mode-given-active-bg: #1a2440;
+  --mode-desc-active: #c0c2ce;
+  --grid-gap-bg: #0a0b0f;
+  --cell-bg: #181a22;
+  --cell-filled-bg: #1c1e26;
+  --hint-hover-outline: #555;
+  --hint-hl-text: #1a1a1a;
+  --side-border: #2e303a;
+  --side-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --stat-bg: #22242c;
+  --stat-border: #353742;
+  --stat-hover-bg: #1e2a3c;
+  --stat-hover-border: #5b9cf5;
+  --hint-msg: #b0b2be;
+  --hint-msg-active: #8ec0ff;
+  --tech-hint-outline: #ce93d8;
+  --tech-hint-bg: #2e1a36;
+  --tech-elim-outline: #ef5350;
+  --tech-elim-bg: #3a1a1a;
 }
 
 * {
@@ -32,6 +120,7 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 .wrap {
@@ -59,7 +148,7 @@ header p {
   margin: 0.25rem 0 0;
   max-width: 36rem;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
@@ -72,8 +161,8 @@ header p {
 
 .btn {
   appearance: none;
-  border: 1px solid #bbb;
-  background: #fff;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
   color: var(--text);
   border-radius: 6px;
   padding: 0.45rem 0.9rem;
@@ -83,16 +172,40 @@ header p {
 }
 
 .btn:hover:not(:disabled) {
-  background: #f0f0f0;
+  background: var(--btn-hover);
 }
 
 .btn:active:not(:disabled) {
-  background: #e4e4e4;
+  background: var(--btn-active);
 }
 
 .btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.theme-toggle .theme-icon {
+  display: none;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Icon reflects preference (system / light / dark), not only resolved palette */
+html[data-theme-pref="light"] .theme-toggle .icon-sun,
+html[data-theme-pref="dark"] .theme-toggle .icon-moon,
+html[data-theme-pref="system"] .theme-toggle .icon-system {
+  display: block;
 }
 
 .main {
@@ -117,8 +230,8 @@ header p {
   gap: 0.15rem;
   width: 100%;
   text-align: left;
-  border: 1px solid #e0e0e0;
-  background: #fafafa;
+  border: 1px solid var(--mode-border);
+  background: var(--mode-bg);
   border-radius: 8px;
   padding: 0.65rem 0.7rem;
   cursor: pointer;
@@ -128,24 +241,24 @@ header p {
 }
 
 .mode-btn:hover {
-  background: #f0f0f0;
+  background: var(--mode-hover);
 }
 
 .mode-btn.active {
-  border-color: #2b6cb0;
-  background: #ebf4ff;
-  box-shadow: inset 3px 0 0 #2b6cb0;
+  border-color: var(--mode-active-border);
+  background: var(--mode-active-bg);
+  box-shadow: inset 3px 0 0 var(--mode-active-border);
 }
 
 .mode-btn.mode-user.active {
-  border-color: #333;
-  background: #f3f3f3;
-  box-shadow: inset 3px 0 0 #111;
+  border-color: var(--text);
+  background: var(--mode-user-active-bg);
+  box-shadow: inset 3px 0 0 var(--user);
 }
 
 .mode-btn.mode-given.active {
   border-color: var(--given);
-  background: #eef0ff;
+  background: var(--mode-given-active-bg);
   box-shadow: inset 3px 0 0 var(--given);
 }
 
@@ -164,12 +277,12 @@ header p {
 
 .mode-desc {
   font-size: 0.72rem;
-  color: #666;
+  color: var(--text-subtle);
   line-height: 1.3;
 }
 
 .mode-btn.active .mode-desc {
-  color: #444;
+  color: var(--mode-desc-active);
 }
 
 .hotkey-letter {
@@ -209,7 +322,7 @@ header p {
 }
 
 .btn.secondary {
-  background: #f7f7f9;
+  background: var(--btn-secondary-bg);
   font-size: 0.85rem;
   padding: 0.4rem 0.65rem;
 }
@@ -218,25 +331,25 @@ header p {
   margin: 0.55rem 0 0;
   font-size: 0.78rem;
   line-height: 1.35;
-  color: #444;
+  color: var(--hint-msg);
   min-height: 1.2em;
 }
 
 .hint-message.has-hint {
-  color: #1a4a7a;
+  color: var(--hint-msg-active);
   font-weight: 550;
 }
 
 .hint.technique-hint,
 .cell-value.technique-hint {
-  outline: 2px solid #7b1fa2;
+  outline: 2px solid var(--tech-hint-outline);
   outline-offset: 0;
-  background: #f3e5f5 !important;
+  background: var(--tech-hint-bg) !important;
 }
 
 .hint.technique-elim {
-  outline: 2px dashed #c62828;
-  background: #ffebee !important;
+  outline: 2px dashed var(--tech-elim-outline);
+  background: var(--tech-elim-bg) !important;
 }
 
 /* 3×3 of 3×3 boxes */
@@ -244,7 +357,7 @@ header p {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--gap-box);
-  background: #ccc;
+  background: var(--grid-gap-bg);
   padding: var(--gap-box);
   border: 2px solid var(--border-box);
   border-radius: 4px;
@@ -265,7 +378,7 @@ header p {
 
 .cell {
   border: 1px solid var(--border-cell);
-  background: #fafafa;
+  background: var(--cell-bg);
   min-width: 0;
   min-height: 0;
   display: flex;
@@ -276,7 +389,7 @@ header p {
 }
 
 .cell.filled {
-  background: #fff;
+  background: var(--cell-filled-bg);
 }
 
 .cell-value {
@@ -323,7 +436,7 @@ header p {
 .super-cell.conflict {
   border-color: var(--conflict);
   box-shadow: 0 0 0 2px var(--conflict);
-  background: #fff5f5;
+  background: var(--conflict-box-bg);
 }
 
 .cell-value.highlight-filled {
@@ -363,21 +476,21 @@ header p {
 }
 
 .hint.visible:hover {
-  outline: 1px solid #ccc;
+  outline: 1px solid var(--hint-hover-outline);
 }
 
 .hint.highlight-hint {
   background: var(--hl-hint);
-  color: #333;
+  color: var(--hint-hl-text);
 }
 
 /* Side panel — digit frequency */
 .side-panel {
   background: var(--panel);
-  border: 1px solid #ddd;
+  border: 1px solid var(--side-border);
   border-radius: 8px;
   padding: 0.85rem 0.9rem 1rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--side-shadow);
 }
 
 .side-title {
@@ -389,7 +502,7 @@ header p {
 .side-hint {
   margin: 0.3rem 0 0.75rem;
   font-size: 0.78rem;
-  color: #666;
+  color: var(--text-subtle);
   line-height: 1.35;
 }
 
@@ -406,16 +519,16 @@ header p {
   gap: 0.4rem;
   padding: 0.4rem 0.5rem;
   border-radius: 6px;
-  border: 1px solid #e6e6e6;
-  background: #fafafa;
+  border: 1px solid var(--stat-border);
+  background: var(--stat-bg);
   font-size: 0.85rem;
   transition: background 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
 }
 
 .stat-row:hover {
-  border-color: #bbb;
-  background: #f0f4ff;
+  border-color: var(--stat-hover-border);
+  background: var(--stat-hover-bg);
 }
 
 .stat-row.complete {
@@ -476,7 +589,7 @@ header p {
 .help {
   margin-top: 1rem;
   font-size: 0.85rem;
-  color: #555;
+  color: var(--text-muted);
   line-height: 1.45;
 }
 
